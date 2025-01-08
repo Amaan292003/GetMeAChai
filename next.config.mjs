@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
+import { configDotenv } from 'dotenv';
+
 const nextConfig = {};
 
-import { configDotenv } from 'dotenv';
+
+
+configDotenv(); // Ensure environment variables are loaded if needed
 
 export default nextConfig;

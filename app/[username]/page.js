@@ -18,7 +18,8 @@ const Username = async ({ params }) => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px] text-center">
         <h1 className="text-3xl font-bold text-red-500">User Not Found</h1>
-        <p className="text-lg text-red-700 mt-4">The username "{params.username}" does not exist in our database.</p>
+        <p className="text-lg text-red-700 mt-4">The username &quot;{params.username}&quot; does not exist in our database.</p>
+
       </div>
     )
   }

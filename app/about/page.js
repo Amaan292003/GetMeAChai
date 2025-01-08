@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 const About = () => {
     return (
@@ -11,14 +12,26 @@ const About = () => {
             <h2 className="text-2xl font-semibold mb-4">How It Works</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div className="flex items-center mb-6">
-                    <img className=" invertImg w-20 h-20 rounded-full mr-4" src="/group.png" alt="Fans Want to Collaborate" />
+                    <Image 
+                        className="invertImg w-20 h-20 rounded-full mr-4" 
+                        src="/group.png" 
+                        alt="Fans Want to Collaborate" 
+                        width={80} 
+                        height={80} 
+                    />
                     <div>
                         <h3 className="text-xl font-semibold mb-2">Fans Want to Collaborate</h3>
                         <p>Your fans are enthusiastic about collaborating with you on your projects.</p>
                     </div>
                 </div>
                 <div className="flex items-center mb-6">
-                    <img className="w-20 h-20 rounded-full mr-4" src="/tea.svg" alt="Support Through Chai" />
+                    <Image 
+                        className="rounded-full mr-4" 
+                        src="/tea.svg" 
+                        alt="Support Through Chai" 
+                        width={80} 
+                        height={80} 
+                    />
                     <div>
                         <h3 className="text-xl font-semibold mb-2">Support Through Chai</h3>
                         <p>Receive support from your fans in the form of chai purchases, directly contributing to your project funding.</p>
@@ -92,5 +105,4 @@ export default About;
 
 export const metadata = {
     title: "About - Get Me A Chai",
-  }
-   
+}
