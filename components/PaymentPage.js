@@ -12,6 +12,7 @@ import { notFound } from "next/navigation";
 import Image from 'next/image';
 
 const PaymentPage = ({ username }) => {
+    const { data: session} = useSession()
     const [paymentform, setPaymentform] = useState({ name: "", message: "", amount: "" })
     const [currentUser, setcurrentUser] = useState({})
     const [payments, setPayments] = useState([])
