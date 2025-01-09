@@ -5,33 +5,21 @@ import Payment from "@/models/Payment";
 import connectDb from "@/db/connectDb";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
+
 export const initiate = async (amount, to_username, paymentform) => {
-    await connectDb();
+    await connectDb()
+    // fetch the secret of the user who is getting the payment 
+    let user = await User.findOne({username: to_username})
+    const secret = user.razorpaysecret
 
-    // Fetch user and their Razorpay credentials
-    const user = await User.findOne({ username: to_username });
-    if (!user) {
-        console.error("User not found:", to_username);
-        throw new Error("User not found.");
-    }
+    var instance = new Razorpay({ key_id: user.razorpayid, key_secret: secret })
 
-    const { razorpayid, razorpaysecret } = user;
 
-    // Validate Razorpay credentials
-    if (!razorpayid || !razorpaysecret) {
-        console.error("Missing Razorpay credentials for user:", to_username);
-        throw new Error("Razorpay ID or Secret is missing.");
-    }
 
-    const instance = new Razorpay({
-        key_id: razorpayid,
-        key_secret: razorpaysecret,
-    });
-
-    const options = {
+    let options = {
         amount: Number.parseInt(amount),
         currency: "INR",
-    };
+    }
 
     // Attempt to create an order
     try {
@@ -95,3 +83,4 @@ export const updateProfile = async (data, oldusername) => {
         await User.updateOne({email: ndata.email}, ndata)
     }
 }
+

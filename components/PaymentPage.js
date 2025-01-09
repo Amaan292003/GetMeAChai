@@ -13,6 +13,7 @@ import Image from 'next/image';
 
 const PaymentPage = ({ username }) => {
     const { data: session} = useSession()
+
     const [paymentform, setPaymentform] = useState({ name: "", message: "", amount: "" })
     const [currentUser, setcurrentUser] = useState({})
     const [payments, setPayments] = useState([])
@@ -25,25 +26,42 @@ const PaymentPage = ({ username }) => {
           } else {
             getData()
           }
+        if (!session) {
+            router.push('/login')
+          } else {
+            getData()
+          }
     }, [])
 
-    useEffect(() => {
-        if (searchParams.get("paymentdone") == "true") {
-            toast('Thanks for your donation!', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
-        }
-        router.push(`/${username}`)
+   useEffect(() => {
+    if (searchParams.get("paymentdone") == "true") {
+        toast('Thanks for your donation!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+        });
+    } else if (searchParams.get("error")) {
+        toast(searchParams.get("error"), {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+        });
+    }
+    router.push(`/${username}`);
+}, [searchParams]);
 
-    }, [])
 
 
     const handleChange = (e) => {
