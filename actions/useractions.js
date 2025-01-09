@@ -1,54 +1,61 @@
-"use server"
+"use server";
 
-import Razorpay from "razorpay"
-import Payment from "@/models/Payment"
-import connectDb from "@/db/connectDb"
-import User from "@/models/User"
-
+import Razorpay from "razorpay";
+import Payment from "@/models/Payment";
+import connectDb from "@/db/connectDb";
+import User from "@/models/User";
+import { NextResponse } from "next/server"; // Import NextResponse for redirection
 
 export const initiate = async (amount, to_username, paymentform) => {
-    await connectDb()
-    // fetch the secret of the user who is getting the payment 
-    let user = await User.findOne({username: to_username})
-    const secret = user.razorpaysecret
+    await connectDb();
+    // Fetch the secret of the user who is getting the payment
+    let user = await User.findOne({ username: to_username });
+    const secret = user.razorpaysecret;
 
-    var instance = new Razorpay({ key_id: user.razorpayid, key_secret: secret })
-
-
+    var instance = new Razorpay({ key_id: user.razorpayid, key_secret: secret });
 
     let options = {
         amount: Number.parseInt(amount),
         currency: "INR",
-    }
+    };
 
+    try {
+        console.log("Creating Razorpay order...");
     
-    // try {
-    //     console.log("Creating Razorpay order...");
-    //     const order = await instance.orders.create(options);
-
-    //     // if (!order || !order.id) {
-    //     //     console.error("Invalid Razorpay order response:", order);
-    //     //     throw new Error("Failed to create Razorpay order.");
-    //     // }
-
-    //     // Create the payment record only if the order is valid
-    //     // console.log("Order created successfully:", order);
-    //    await Payment.create({ oid: x.id, amount: amount/100, to_user: to_username, name: paymentform.name, message: paymentform.message })
-    //     return order;
-    // } catch (error) {
-    //     console.error("Error creating Razorpay order:");
-    //     // throw new Error("Failed to create Razorpay order. Please check the credentials or try again later.");
-    //     // NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/dashboard`);
-    // }
-    let x = await instance.orders.create(options)
-    // create a payment object which shows a pending payment in the database
-    await Payment.create({ oid: x.id, amount: amount/100, to_user: to_username, name: paymentform.name, message: paymentform.message })
-
-    return x
-
+        // Attempt to create the Razorpay order
+        let order = await instance.orders.create(options);
+    
+        
+        // if (!order || !order.id) {
+        //     console.error("Invalid Razorpay order response:", order);
+        //     throw new Error("Failed to create Razorpay order.");
+        // }
+    
+        console.log("Order created successfully:", order);
+    
+        // Save payment details in the database
+        await Payment.create({
+            oid: order.id,
+            amount: amount / 100,
+            to_user: to_username,
+            name: paymentform.name,
+            message: paymentform.message,
+        });
+    
+        return order; // Return the created order
+    } catch (error) {
+        // Log the full error object for debugging
+    
+        // Handle invalid credentials specifically
+        if (error.statusCode === 401 || error.message.includes("Authentication failed")) {
+            throw new Error("Invalid Razorpay ID or secret. Please verify your credentials.");
+        }
+    
+        // Handle other errors generically
+        // throw new Error("Failed to create Razorpay order. Please check the credentials or try again later.");
+    }
+    
 };
-
-
 
 
 export const fetchuser = async (username) => {
@@ -71,19 +78,23 @@ export const updateProfile = async (data, oldusername) => {
 
     // If the username is being updated, check if username is available
     if (oldusername !== ndata.username) {
-        let u = await User.findOne({ username: ndata.username })
-        if (u) {
-            return { error: "Username already exists" }
-        }   
+        
         await User.updateOne({email: ndata.email}, ndata)
         // Now update all the usernames in the Payments table 
         await Payment.updateMany({to_user: oldusername}, {to_user: ndata.username})
         
     }
     else{
-
-        
+      
         await User.updateOne({email: ndata.email}, ndata)
     }
+
 }
+
+
+
+
+
+
+
 
