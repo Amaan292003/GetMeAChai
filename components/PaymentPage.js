@@ -22,23 +22,35 @@ const PaymentPage = ({ username }) => {
         getData()
     }, [])
 
-    useEffect(() => {
-        if (searchParams.get("paymentdone") == "true") {
-            toast('Thanks for your donation!', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
-        }
-        router.push(`/${username}`)
+   useEffect(() => {
+    if (searchParams.get("paymentdone") == "true") {
+        toast('Thanks for your donation!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+        });
+    } else if (searchParams.get("error")) {
+        toast(searchParams.get("error"), {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+        });
+    }
+    router.push(`/${username}`);
+}, [searchParams]);
 
-    }, [])
 
 
     const handleChange = (e) => {
