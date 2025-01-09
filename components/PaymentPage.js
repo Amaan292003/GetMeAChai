@@ -60,7 +60,7 @@ const PaymentPage = ({ username }) => {
 
     const pay = async (amount) => {
         let a = await initiate(amount, username, paymentform)
-        if(a){
+        // if(a){
         let orderId = a.id
         var options = {
             "key": currentUser.razorpayid,
@@ -86,10 +86,10 @@ const PaymentPage = ({ username }) => {
 
         var rzp1 = new Razorpay(options);
         rzp1.open();
-        }
-        else{
-            router.push('/invalid')
-        }
+        // }
+        // else{
+        //     router.push('/invalid')
+        // }
     }
 
 
