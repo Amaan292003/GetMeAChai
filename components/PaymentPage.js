@@ -12,6 +12,7 @@ import { notFound } from "next/navigation";
 import Image from 'next/image';
 
 const PaymentPage = ({ username }) => {
+    const { data: session} = useSession()
     const [paymentform, setPaymentform] = useState({ name: "", message: "", amount: "" })
     const [currentUser, setcurrentUser] = useState({})
     const [payments, setPayments] = useState([])
@@ -19,7 +20,11 @@ const PaymentPage = ({ username }) => {
     const router = useRouter()
 
     useEffect(() => {
-        getData()
+        if (!session) {
+            router.push('/login')
+          } else {
+            getData()
+          }
     }, [])
 
     useEffect(() => {
@@ -54,6 +59,7 @@ const PaymentPage = ({ username }) => {
 
     const pay = async (amount) => {
         let a = await initiate(amount, username, paymentform)
+        if(a){
         let orderId = a.id
         var options = {
             "key": currentUser.razorpayid,
@@ -79,6 +85,10 @@ const PaymentPage = ({ username }) => {
 
         var rzp1 = new Razorpay(options);
         rzp1.open();
+        }
+        else{
+            router.push('/invalid')
+        }
     }
 
 
@@ -145,9 +155,9 @@ const PaymentPage = ({ username }) => {
                         </div>
 
                         <div className='flex flex-col md:flex-row gap-2 mt-5'>
-                            <button className='bg-slate-800 p-3 rounded-lg' onClick={() => pay(1000)}>Pay ₹10</button>
-                            <button className='bg-slate-800 p-3 rounded-lg' onClick={() => pay(2000)}>Pay ₹20</button>
-                            <button className='bg-slate-800 p-3 rounded-lg' onClick={() => pay(3000)}>Pay ₹30</button>
+                            <button className='bg-slate-800 disabled:bg-slate-600 disabled:from-purple-100 p-3 rounded-lg' disabled={paymentform.name?.length < 3 || paymentform.message?.length < 4} onClick={()=>pay(1000)}>Pay ₹10</button>
+                            <button className='bg-slate-800 disabled:bg-slate-600 disabled:from-purple-100 p-3 rounded-lg' disabled={paymentform.name?.length < 3 || paymentform.message?.length < 4} onClick={()=>pay(2000)}>Pay ₹20</button>
+                            <button className='bg-slate-800 disabled:bg-slate-600 disabled:from-purple-100 p-3 rounded-lg' disabled={paymentform.name?.length < 3 || paymentform.message?.length < 4} onClick={()=>pay(3000)}>Pay ₹30</button>
                         </div>
                     </div>
                 </div>
