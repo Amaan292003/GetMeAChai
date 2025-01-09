@@ -22,7 +22,9 @@ export const authoptions =  NextAuth({
     callbacks: {
       async signIn({ user, account, profile, email, credentials }){
          if(account.provider == "github" || account.provider == "google"){ 
+          console.log("connecting to database")
           await connectDb()
+          console.log("connected to database")
           // Check if the user already exists in the database
           const currentUser =  await User.findOne({email: email}) 
           if(!currentUser){
