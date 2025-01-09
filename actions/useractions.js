@@ -20,12 +20,22 @@ export const initiate = async (amount, to_username, paymentform) => {
         currency: "INR",
     }
 
-    let x = await instance.orders.create(options)
+    try {
+        let x = await instance.orders.create(options)
+        console.log("x", x)
 
-    // create a payment object which shows a pending payment in the database
-    await Payment.create({ oid: x.id, amount: amount/100, to_user: to_username, name: paymentform.name, message: paymentform.message })
+        // Only create the payment object if the order is successfully created
+        if (x && x.id) {
+            await Payment.create({ oid: x.id, amount: amount / 100, to_user: to_username, name: paymentform.name, message: paymentform.message })
+            return x
+        } else {
+            throw new Error("Invalid Razorpay order response")
+        }
 
-    return x
+    } catch (error) {
+        console.error("Error creating order with Razorpay:", error)
+        throw new Error("Razorpay order creation failed. Please check credentials or try again later.")
+    }
 
 }
 
