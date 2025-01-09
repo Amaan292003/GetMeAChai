@@ -1,10 +1,10 @@
-"use server";
+"use server"
 
-import Razorpay from "razorpay";
-import Payment from "@/models/Payment";
-import connectDb from "@/db/connectDb";
-import User from "@/models/User";
-import { NextResponse } from "next/server";
+import Razorpay from "razorpay"
+import Payment from "@/models/Payment"
+import connectDb from "@/db/connectDb"
+import User from "@/models/User"
+
 
 export const initiate = async (amount, to_username, paymentform) => {
     await connectDb()
@@ -33,14 +33,7 @@ export const initiate = async (amount, to_username, paymentform) => {
 
         // Create the payment record only if the order is valid
         // console.log("Order created successfully:", order);
-        await Payment.create({
-            oid: order.id,
-            amount: amount / 100,
-            to_user: to_username,
-            name: paymentform.name,
-            message: paymentform.message,
-        });
-
+       await Payment.create({ oid: x.id, amount: amount/100, to_user: to_username, name: paymentform.name, message: paymentform.message })
         return order;
     } catch (error) {
         console.error("Error creating Razorpay order:");
